@@ -10,7 +10,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 export async function POST(req: Request) {
   try {
     await dbConnect();
-    const { visitorName, hostId, contact, purpose } = await req.json();
+    const { visitorName, hostId, contact, status, purpose } = await req.json();
 
     // 1. Create the database record
     const newVisit = await Visit.create({
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       contact,
       hostId,
       purpose,
-      status: "Pending"
+      status: status || "Pending"
     });
 
     // 2. Fetch the host's email to notify them
