@@ -7,7 +7,7 @@ import Table from "@/components/Table";
 
 export default function SecurityDashboard() {
   const router = useRouter();
-  const [visits, setVisits] = useState([]);
+  const [visits, setVisits] = useState<any[]>([]);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const fetchSecurityData = async () => {
@@ -21,7 +21,11 @@ export default function SecurityDashboard() {
   };
 
   useEffect(() => {
-    fetchSecurityData();
+    const timer = window.setTimeout(() => {
+      void fetchSecurityData();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const handleGateAction = async (visitId: string, action: "check-in" | "check-out") => {
@@ -45,9 +49,12 @@ export default function SecurityDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Gate Security</h1>
-        <p className="text-sm text-gray-500">Verify approved visitors and manage building access.</p>
+      <div className="surface-header">
+        <div>
+          <div className="eyebrow">Security</div>
+          <h1 className="page-title mt-3">Gate Security</h1>
+          <p className="page-copy mt-2">Verify approved visitors and manage building access.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -55,14 +62,14 @@ export default function SecurityDashboard() {
         <Card title={`Gate Verification (${expectedVisitors.length})`}>
           <Table headers={["Visitor", "Host", "Action"]}>
             {expectedVisitors.map((visit: any) => (
-              <tr key={visit._id}>
-                <td className="px-6 py-4 font-medium text-gray-900">{visit.visitorName}</td>
-                <td className="px-6 py-4 text-sm text-gray-500">{visit.hostId?.name}</td>
+              <tr key={visit._id} className="hover:bg-slate-50/80">
+                <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
+                <td className="px-6 py-4 text-sm text-slate-500">{visit.hostId?.name}</td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => handleGateAction(visit._id, "check-in")}
                     disabled={loadingId === visit._id}
-                    className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+                    className="button-primary"
                   >
                     {loadingId === visit._id ? "Processing..." : "Check-In"}
                   </button>
@@ -70,7 +77,7 @@ export default function SecurityDashboard() {
               </tr>
             ))}
             {expectedVisitors.length === 0 && (
-              <tr><td colSpan={3} className="px-6 py-4 text-center text-gray-500">No approved visitors waiting.</td></tr>
+              <tr><td colSpan={3} className="px-6 py-4 text-center text-slate-500">No approved visitors waiting.</td></tr>
             )}
           </Table>
         </Card>
@@ -79,16 +86,16 @@ export default function SecurityDashboard() {
         <Card title={`In-Premise (${inPremiseVisitors.length})`}>
           <Table headers={["Visitor", "Entry Time", "Action"]}>
             {inPremiseVisitors.map((visit: any) => (
-              <tr key={visit._id} className="bg-green-50/30">
-                <td className="px-6 py-4 font-medium text-gray-900">{visit.visitorName}</td>
-                <td className="px-6 py-4 text-sm text-gray-500">
+              <tr key={visit._id} className="bg-emerald-50/40 hover:bg-emerald-50">
+                <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
+                <td className="px-6 py-4 text-sm text-slate-500">
                   {visit.entryTime ? new Date(visit.entryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}
                 </td>
                 <td className="px-6 py-4">
                   <button
                     onClick={() => handleGateAction(visit._id, "check-out")}
                     disabled={loadingId === visit._id}
-                    className="bg-gray-800 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-900 disabled:opacity-50 transition"
+                    className="button-secondary bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
                   >
                     {loadingId === visit._id ? "Processing..." : "Check-Out"}
                   </button>
@@ -96,7 +103,7 @@ export default function SecurityDashboard() {
               </tr>
             ))}
             {inPremiseVisitors.length === 0 && (
-              <tr><td colSpan={3} className="px-6 py-4 text-center text-gray-500">Building is clear.</td></tr>
+              <tr><td colSpan={3} className="px-6 py-4 text-center text-slate-500">Building is clear.</td></tr>
             )}
           </Table>
         </Card>

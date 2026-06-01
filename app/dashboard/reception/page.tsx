@@ -8,8 +8,8 @@ import Table from "@/components/Table";
 
 export default function ReceptionDashboard() {
   const router = useRouter();
-  const [hosts, setHosts] = useState([]);
-  const [visits, setVisits] = useState([]);
+  const [hosts, setHosts] = useState<any[]>([]);
+  const [visits, setVisits] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [visitorToPrint, setVisitorToPrint] = useState<any>(null);
   const [contact, setContact] = useState("");
@@ -30,7 +30,11 @@ export default function ReceptionDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
+    const timer = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -63,9 +67,12 @@ export default function ReceptionDashboard() {
 
   return (
     <div className="space-y-6 relative">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Reception Desk</h1>
-        <p className="text-sm text-gray-500">Register walk-ins and print visitor passes.</p>
+      <div className="surface-header">
+        <div>
+          <div className="eyebrow">Reception Desk</div>
+          <h1 className="page-title mt-3">Reception Desk</h1>
+          <p className="page-copy mt-2">Register walk-ins and print visitor passes.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -74,32 +81,32 @@ export default function ReceptionDashboard() {
           <Card title="New Visitor Walk-in">
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">Visitor Name</label>
+                <label className="form-label">Visitor Name</label>
                 <input 
                     required 
                     value={visitorName} 
                     onChange={(e) => setVisitorName(e.target.value)} 
-                    className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" 
+                    className="input-field" 
                     placeholder="John Doe" 
                     />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Contact Number</label>
+                <label className="form-label">Contact Number</label>
                 <input 
                   required 
                   value={contact} 
                   onChange={(e) => setContact(e.target.value)} 
-                  className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" 
+                  className="input-field" 
                   placeholder="555-0199" 
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Host (Employee)</label>
+                <label className="form-label">Host (Employee)</label>
                 <select 
                     required 
                     value={hostId} 
                     onChange={(e) => setHostId(e.target.value)} 
-                    className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white"
+                    className="input-field"
                     >
                   <option value="" disabled>Select a host...</option>
                   {hosts.map((h: any) => (
@@ -108,12 +115,12 @@ export default function ReceptionDashboard() {
                 </select>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Purpose</label>
+                <label className="form-label">Purpose</label>
                 <select 
                     required 
                     value={purpose} 
                     onChange={(e) => setPurpose(e.target.value)} 
-                    className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white"
+                    className="input-field"
                     >
                   <option value="" disabled>Select a reason...</option>
                   <option value="Meeting">Meeting</option>
@@ -122,7 +129,7 @@ export default function ReceptionDashboard() {
                   <option value="Personal">Personal</option>
                 </select>
               </div>
-              <button type="submit" disabled={loading} className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="button-primary w-full">
                 {loading ? "Registering..." : "Register & Notify Host"}
               </button>
             </form>
@@ -134,8 +141,8 @@ export default function ReceptionDashboard() {
           <Card title="Today's Visitor Log">
             <Table headers={["Visitor", "Host", "Time", "Status", "Action"]}>
               {visits.map((visit: any) => (
-                <tr key={visit._id}>
-                  <td className="px-6 py-4 font-medium text-gray-900">{visit.visitorName}</td>
+                <tr key={visit._id} className="hover:bg-slate-50/80">
+                  <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
                   <td className="px-6 py-4">{visit.hostId?.name || "Unknown"}</td>
                   <td className="px-6 py-4">{new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                   <td className="px-6 py-4">
@@ -143,15 +150,15 @@ export default function ReceptionDashboard() {
                   </td>
                   <td className="px-6 py-4">
                     {visit.status === "Approved" ? (
-                      <button onClick={() => handlePrint(visit)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">Print Pass</button>
+                      <button onClick={() => handlePrint(visit)} className="text-sm font-medium text-blue-700 transition hover:text-blue-800">Print Pass</button>
                     ) : (
-                      <span className="text-sm text-gray-400">Wait for approval</span>
+                      <span className="text-sm text-slate-400">Wait for approval</span>
                     )}
                   </td>
                 </tr>
               ))}
               {visits.length === 0 && (
-                <tr><td colSpan={5} className="px-6 py-4 text-center text-gray-500">No visitors registered today.</td></tr>
+                <tr><td colSpan={5} className="px-6 py-4 text-center text-slate-500">No visitors registered today.</td></tr>
               )}
             </Table>
           </Card>
@@ -160,7 +167,7 @@ export default function ReceptionDashboard() {
 
       {/* Hidden Printable Pass (Only visible during window.print) */}
       {visitorToPrint && (
-        <div id="print-section" className="border-2 border-black p-6 bg-white shadow-none text-center">
+        <div id="print-section" className="border-2 border-slate-900 bg-white p-6 text-center shadow-none">
           <h2 className="text-2xl font-bold uppercase mb-2">Visitor Pass</h2>
           <div className="border-b-2 border-black mb-4"></div>
           <p className="text-sm text-gray-500 uppercase">Name</p>

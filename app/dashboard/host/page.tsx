@@ -10,7 +10,7 @@ export default function HostDashboard() {
   const { data: session } = useSession();
   const router = useRouter();
   
-  const [visits, setVisits] = useState([]);
+  const [visits, setVisits] = useState<any[]>([]);
   const [hostId, setHostId] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,7 +19,7 @@ export default function HostDashboard() {
   const [contact, setContact] = useState("");
   const [purpose, setPurpose] = useState("");
 
-  const fetchHostData = async () => {
+  const refreshHostData = async () => {
     if (!session?.user?.email) return;
     try {
       const res = await fetch(`/api/visits/host?email=${session.user.email}`);
@@ -34,8 +34,25 @@ export default function HostDashboard() {
   };
 
   useEffect(() => {
-    fetchHostData();
-  }, [session]);
+    const timer = window.setTimeout(() => {
+      if (!session?.user?.email) return;
+
+      void (async () => {
+        try {
+          const res = await fetch(`/api/visits/host?email=${session.user.email}`);
+          const data = await res.json();
+          if (data.visits) {
+            setVisits(data.visits);
+            setHostId(data.hostId);
+          }
+        } catch (error) {
+          console.error("Failed to fetch host data:", error);
+        }
+      })();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [session?.user?.email]);
 
   const handleUpdateStatus = async (visitId: string, status: string) => {
     const res = await fetch("/api/visits/update-status", {
@@ -44,7 +61,7 @@ export default function HostDashboard() {
       body: JSON.stringify({ visitId, status }),
     });
     if (res.ok) {
-      await fetchHostData();
+      await refreshHostData();
       router.refresh();
     }
   };
@@ -63,7 +80,7 @@ export default function HostDashboard() {
       setVisitorName("");
       setContact("");
       setPurpose("");
-      await fetchHostData();
+      await refreshHostData();
       router.refresh();
     }
     setLoading(false);
@@ -75,27 +92,30 @@ export default function HostDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Dashboard</h1>
-        <p className="text-sm text-gray-500">Manage your pending approvals and pre-register guests.</p>
+      <div className="surface-header">
+        <div>
+          <div className="eyebrow">Host Workspace</div>
+          <h1 className="page-title mt-3">My Dashboard</h1>
+          <p className="page-copy mt-2">Manage your pending approvals and pre-register guests.</p>
+        </div>
       </div>
 
       {/* Pending Approvals Section */}
       <Card title={`Action Required: Pending Approvals (${pendingVisits.length})`}>
         {pendingVisits.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4">You have no visitors waiting.</p>
+          <p className="py-4 text-sm text-slate-500">You have no visitors waiting.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {pendingVisits.map((visit: any) => (
-              <div key={visit._id} className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm">
-                <h3 className="font-bold text-lg text-gray-900">{visit.visitorName}</h3>
-                <p className="text-sm text-gray-600 mb-1">Purpose: {visit.purpose}</p>
-                <p className="text-sm text-gray-600 mb-4">Time: {new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+              <div key={visit._id} className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md">
+                <h3 className="text-lg font-semibold tracking-tight text-slate-900">{visit.visitorName}</h3>
+                <p className="mb-1 text-sm text-slate-600">Purpose: {visit.purpose}</p>
+                <p className="mb-4 text-sm text-slate-600">Time: {new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 <div className="flex space-x-3">
-                  <button onClick={() => handleUpdateStatus(visit._id, "Approved")} className="flex-1 bg-green-600 text-white py-2 rounded hover:bg-green-700 text-sm font-medium transition">
+                  <button onClick={() => handleUpdateStatus(visit._id, "Approved")} className="button-primary flex-1 bg-emerald-600 hover:bg-emerald-700">
                     Approve
                   </button>
-                  <button onClick={() => handleUpdateStatus(visit._id, "Rejected")} className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700 text-sm font-medium transition">
+                  <button onClick={() => handleUpdateStatus(visit._id, "Rejected")} className="button-secondary flex-1 border-rose-200 text-rose-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700">
                     Reject
                   </button>
                 </div>
@@ -111,23 +131,23 @@ export default function HostDashboard() {
           <Card title="Pre-Register a Guest">
             <form onSubmit={handlePreRegister} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">Guest Name</label>
-                <input required value={visitorName} onChange={(e) => setVisitorName(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" placeholder="Clark Kent" />
+                <label className="form-label">Guest Name</label>
+                <input required value={visitorName} onChange={(e) => setVisitorName(e.target.value)} className="input-field" placeholder="Clark Kent" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Contact Number</label>
-                <input required value={contact} onChange={(e) => setContact(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" placeholder="555-0199" />
+                <label className="form-label">Contact Number</label>
+                <input required value={contact} onChange={(e) => setContact(e.target.value)} className="input-field" placeholder="555-0199" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Purpose</label>
-                <select required value={purpose} onChange={(e) => setPurpose(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white">
+                <label className="form-label">Purpose</label>
+                <select required value={purpose} onChange={(e) => setPurpose(e.target.value)} className="input-field">
                   <option value="" disabled>Select a reason...</option>
                   <option value="Meeting">Meeting</option>
                   <option value="Interview">Interview</option>
                   <option value="Personal">Personal</option>
                 </select>
               </div>
-              <button type="submit" disabled={loading || !hostId} className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50">
+              <button type="submit" disabled={loading || !hostId} className="button-primary w-full">
                 {loading ? "Registering..." : "Pre-Register (Auto-Approve)"}
               </button>
             </form>
@@ -139,8 +159,8 @@ export default function HostDashboard() {
           <Card title="My Visitor History">
             <Table headers={["Visitor", "Purpose", "Date", "Status"]}>
               {historyVisits.map((visit: any) => (
-                <tr key={visit._id}>
-                  <td className="px-6 py-4 font-medium text-gray-900">{visit.visitorName}</td>
+                <tr key={visit._id} className="hover:bg-slate-50/80">
+                  <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
                   <td className="px-6 py-4">{visit.purpose}</td>
                   <td className="px-6 py-4">{new Date(visit.createdAt).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
@@ -149,7 +169,7 @@ export default function HostDashboard() {
                 </tr>
               ))}
               {historyVisits.length === 0 && (
-                <tr><td colSpan={4} className="px-6 py-4 text-center text-gray-500">No past visitors found.</td></tr>
+                <tr><td colSpan={4} className="px-6 py-4 text-center text-slate-500">No past visitors found.</td></tr>
               )}
             </Table>
           </Card>

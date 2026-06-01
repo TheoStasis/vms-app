@@ -7,7 +7,7 @@ import Table from "@/components/Table";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Form State
@@ -21,7 +21,12 @@ export default function AdminDashboard() {
     setUsers(await res.json());
   };
 
-  useEffect(() => { fetchUsers(); 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void fetchUsers();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -56,9 +61,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">System Administration</h1>
-        <p className="text-sm text-gray-500">Manage employee accounts and system access.</p>
+      <div className="surface-header">
+        <div>
+          <div className="eyebrow">Administration</div>
+          <h1 className="page-title mt-3">System Administration</h1>
+          <p className="page-copy mt-2">Manage employee accounts and system access.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -66,20 +74,20 @@ export default function AdminDashboard() {
           <Card title="Add New Employee">
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">Full Name</label>
-                <input required value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" />
+                <label className="form-label">Full Name</label>
+                <input required value={name} onChange={(e) => setName(e.target.value)} className="input-field" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Email</label>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" />
+                <label className="form-label">Email</label>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">Temporary Password</label>
-                <input required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" />
+                <label className="form-label">Temporary Password</label>
+                <input required value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium">System Role</label>
-                <select required value={role} onChange={(e) => setRole(e.target.value)} className="w-full rounded-md border px-3 py-2 text-sm text-gray-900 bg-white">
+                <label className="form-label">System Role</label>
+                <select required value={role} onChange={(e) => setRole(e.target.value)} className="input-field">
                   <option value="Admin">Admin</option>
                   <option value="Host">Host</option>
                   <option value="Receptionist">Receptionist</option>
@@ -87,7 +95,7 @@ export default function AdminDashboard() {
                   <option value="Auditor">Auditor</option>
                 </select>
               </div>
-              <button type="submit" disabled={loading} className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="button-primary w-full">
                 {loading ? "Creating..." : "Create Account"}
               </button>
             </form>
@@ -98,12 +106,12 @@ export default function AdminDashboard() {
           <Card title="Active System Users">
             <Table headers={["Name", "Email", "Role", "Action"]}>
               {users.map((user: any) => (
-                <tr key={user._id}>
-                  <td className="px-6 py-4 font-medium text-gray-900">{user.name}</td>
+                <tr key={user._id} className="hover:bg-slate-50/80">
+                  <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
                   <td className="px-6 py-4">{user.email}</td>
-                  <td className="px-6 py-4"><span className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded border border-gray-200">{user.role}</span></td>
+                  <td className="px-6 py-4"><span className="badge badge-completed">{user.role}</span></td>
                   <td className="px-6 py-4">
-                    <button onClick={() => handleDeleteUser(user._id)} className="text-red-600 hover:text-red-800 text-sm font-medium">Delete</button>
+                    <button onClick={() => handleDeleteUser(user._id)} className="text-sm font-medium text-rose-600 transition hover:text-rose-700">Delete</button>
                   </td>
                 </tr>
               ))}

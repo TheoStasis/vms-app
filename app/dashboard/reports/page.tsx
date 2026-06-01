@@ -5,7 +5,7 @@ import Card from "@/components/Card";
 import Table from "@/components/Table";
 
 export default function ReportsDashboard() {
-  const [allVisits, setAllVisits] = useState([]);
+  const [allVisits, setAllVisits] = useState<any[]>([]);
   
   // Date Filters
   const [startDate, setStartDate] = useState("");
@@ -59,28 +59,29 @@ export default function ReportsDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-end">
+      <div className="surface-header">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Master Audit Log</h1>
-          <p className="text-sm text-gray-500">Review all historical visitor records and export for compliance.</p>
+          <div className="eyebrow">Compliance</div>
+          <h1 className="page-title mt-3">Master Audit Log</h1>
+          <p className="page-copy mt-2">Review all historical visitor records and export for compliance.</p>
         </div>
-        <button onClick={handleExportCSV} className="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-green-700 transition">
+        <button onClick={handleExportCSV} className="button-primary bg-emerald-600 hover:bg-emerald-700">
           Export to CSV
         </button>
       </div>
 
       <Card title="Filter Records">
-        <div className="flex space-x-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Start Date</label>
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" />
+            <label className="form-label">Start Date</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-field" />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">End Date</label>
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="rounded-md border px-3 py-2 text-sm text-gray-900 bg-white" />
+            <label className="form-label">End Date</label>
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input-field" />
           </div>
           <div className="flex items-end pb-1">
-            <button onClick={() => { setStartDate(""); setEndDate(""); }} className="text-sm text-blue-600 hover:underline">
+            <button onClick={() => { setStartDate(""); setEndDate(""); }} className="button-ghost px-0 hover:bg-transparent hover:text-blue-700">
               Clear Filters
             </button>
           </div>
@@ -90,17 +91,17 @@ export default function ReportsDashboard() {
       <Card title={`Historical Data (${filteredVisits.length} records)`}>
         <Table headers={["Visitor", "Host", "Date", "Status", "Entry", "Exit"]}>
           {filteredVisits.map((visit: any) => (
-            <tr key={visit._id}>
-              <td className="px-6 py-4 font-medium text-gray-900">{visit.visitorName}</td>
-              <td className="px-6 py-4 text-sm text-gray-500">{visit.hostId?.name}</td>
-              <td className="px-6 py-4 text-sm">{new Date(visit.createdAt).toLocaleDateString()}</td>
+            <tr key={visit._id} className="hover:bg-slate-50/80">
+              <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
+              <td className="px-6 py-4 text-sm text-slate-500">{visit.hostId?.name}</td>
+              <td className="px-6 py-4 text-sm text-slate-700">{new Date(visit.createdAt).toLocaleDateString()}</td>
               <td className="px-6 py-4"><span className={`badge badge-${visit.status.toLowerCase()}`}>{visit.status}</span></td>
-              <td className="px-6 py-4 text-sm">{visit.entryTime ? new Date(visit.entryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}</td>
-              <td className="px-6 py-4 text-sm">{visit.exitTime ? new Date(visit.exitTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}</td>
+              <td className="px-6 py-4 text-sm text-slate-700">{visit.entryTime ? new Date(visit.entryTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}</td>
+              <td className="px-6 py-4 text-sm text-slate-700">{visit.exitTime ? new Date(visit.exitTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "--"}</td>
             </tr>
           ))}
           {filteredVisits.length === 0 && (
-            <tr><td colSpan={6} className="px-6 py-4 text-center text-gray-500">No records found for this date range.</td></tr>
+            <tr><td colSpan={6} className="px-6 py-4 text-center text-slate-500">No records found for this date range.</td></tr>
           )}
         </Table>
       </Card>

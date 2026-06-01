@@ -32,44 +32,68 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
-        <div className="flex flex-col items-center">
-          
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900">
-            VMS Portal
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Sign in to manage visitors
-          </p>
-        </div>
+    <div className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-8 text-white shadow-[0_24px_80px_rgba(15,23,42,0.22)] sm:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.22),transparent_32%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.16),transparent_28%)]" />
+          <div className="relative max-w-lg">
+            <div className="eyebrow border-white/15 bg-white/10 text-white">Visitor Management System</div>
+            <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl">
+              Modern visitor operations, without the clutter.
+            </h1>
+            <p className="mt-4 text-base leading-7 text-slate-200 sm:text-lg">
+              Sign in to manage arrivals, approvals, and audit trails from a calm, focused workspace designed for daily use.
+            </p>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                <div className="text-2xl font-semibold">Fast</div>
+                <div className="mt-1 text-sm text-slate-300">Clear actions at the front desk</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                <div className="text-2xl font-semibold">Safe</div>
+                <div className="mt-1 text-sm text-slate-300">Role-based access and approvals</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-4 backdrop-blur-sm">
+                <div className="text-2xl font-semibold">Clean</div>
+                <div className="mt-1 text-sm text-slate-300">Built for long shifts and long logs</div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <section className="surface p-8 sm:p-10">
+          <div className="flex flex-col items-start gap-2">
+            <div className="eyebrow">Sign In</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">Welcome back</h2>
+            <p className="text-sm leading-6 text-slate-600">Enter your credentials to continue to the dashboard.</p>
+          </div>
+
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
+            <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
               {error}
             </div>
           )}
-          <div className="space-y-4 rounded-md shadow-sm">
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+              <label htmlFor="email" className="form-label">Email address</label>
               <input
                 id="email"
                 type="email"
                 required
-                className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="input-field"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="form-label">Password</label>
               <input
                 id="password"
                 type="password"
                 required
-                className="relative block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="input-field"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -80,11 +104,12 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            className="button-primary w-full"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
-        </form>
+          </form>
+        </section>
       </div>
     </div>
   );
