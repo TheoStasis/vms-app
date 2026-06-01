@@ -6,7 +6,6 @@ import Table from "@/components/Table";
 
 export default function ReportsDashboard() {
   const [allVisits, setAllVisits] = useState([]);
-  const [filteredVisits, setFilteredVisits] = useState([]);
   
   // Date Filters
   const [startDate, setStartDate] = useState("");
@@ -17,33 +16,24 @@ export default function ReportsDashboard() {
       const res = await fetch("/api/visits/all");
       const data = await res.json();
       setAllVisits(data);
-      setFilteredVisits(data); // Default to showing all
     };
     fetchAllVisits();
+  
   }, []);
 
-  // Filter logic whenever dates change
-  useEffect(() => {
-    if (!startDate && !endDate) {
-      setFilteredVisits(allVisits);
-      return;
-    }
+  // DERIVED STATE
+  const filteredVisits = allVisits.filter((visit: any) => {
+    if (!startDate && !endDate) return true;
 
-    const filtered = allVisits.filter((visit: any) => {
-      const visitDate = new Date(visit.createdAt).getTime();
-      const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : 0;
-      const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : Infinity;
-      return visitDate >= start && visitDate <= end;
-    });
-
-    setFilteredVisits(filtered);
-  }, [startDate, endDate, allVisits]);
+    const visitDate = new Date(visit.createdAt).getTime();
+    const start = startDate ? new Date(startDate).setHours(0, 0, 0, 0) : 0;
+    const end = endDate ? new Date(endDate).setHours(23, 59, 59, 999) : Infinity;
+    return visitDate >= start && visitDate <= end;
+  });
 
   const handleExportCSV = () => {
-    // 1. Create CSV Headers
     const headers = ["Visitor Name", "Contact", "Host Name", "Purpose", "Status", "Created At", "Entry Time", "Exit Time"];
     
-    // 2. Map data into rows
     const rows = filteredVisits.map((v: any) => [
       `"${v.visitorName}"`,
       `"${v.contact}"`,
@@ -55,10 +45,8 @@ export default function ReportsDashboard() {
       v.exitTime ? `"${new Date(v.exitTime).toLocaleString()}"` : '"--"'
     ]);
 
-    // 3. Combine headers and rows
     const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
 
-    // 4. Trigger download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);

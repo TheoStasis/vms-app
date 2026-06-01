@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
         <div className="flex flex-col items-center">
-          //logo
+          
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-gray-900">
             VMS Portal
           </h2>

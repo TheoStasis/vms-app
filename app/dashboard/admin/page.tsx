@@ -21,7 +21,8 @@ export default function AdminDashboard() {
     setUsers(await res.json());
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { fetchUsers(); 
+  }, []);
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
