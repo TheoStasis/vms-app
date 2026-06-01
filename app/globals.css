@@ -31,3 +31,24 @@ body {
   .badge-checked-in { @apply bg-green-100 text-green-800; }
   .badge-completed { @apply bg-gray-100 text-gray-800; }
 }
+
+@media print {
+  /* Hide everything on the screen by default */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Only make the element with the ID 'print-section' visible */
+  #print-section, #print-section * {
+    visibility: visible;
+  }
+  
+  /* Center the printable pass on the physical paper */
+  #print-section {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    width: 300px !important;
+  }
+}
