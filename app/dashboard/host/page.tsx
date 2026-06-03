@@ -19,10 +19,14 @@ export default function HostDashboard() {
   const [contact, setContact] = useState("");
   const [purpose, setPurpose] = useState("");
 
-  const refreshHostData = async () => {
-    if (!session?.user?.email) return;
+ const refreshHostData = async () => {
+    const userEmail = session?.user?.email;
+
+   
+    if (!userEmail) return;
+
     try {
-      const res = await fetch(`/api/visits/host?email=${session.user.email}`);
+      const res = await fetch(`/api/visits/host?email=${userEmail}`);
       const data = await res.json();
       if (data.visits) {
         setVisits(data.visits);
