@@ -224,28 +224,3 @@ html {
   color: #be123c;
 }
 
-@media print {
-  @page {
-    margin: 0; 
-  }
-
-  body * {
-    visibility: hidden;
-  }
-
-  #print-section, #print-section * {
-    visibility: visible;
-  }
-
-  #print-section {
-    position: absolute;
-    top: 40px; 
-    left: 0;
-    right: 0;
-    margin: 0 auto; 
-    width: 90%;
-    max-width: 400px;
-    background-color: white !important;
-    border: none !important;
-  }
-}
