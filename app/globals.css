@@ -225,6 +225,10 @@ html {
 }
 
 @media print {
+  @page {
+    margin: 1cm;
+  }
+
   body * {
     visibility: hidden;
   }
@@ -236,8 +240,13 @@ html {
   #print-section {
     position: absolute;
     left: 50%;
-    top: 10%;
-    transform: translateX(-50%);
-    width: 300px !important;
+    top: 0;
+    transform: translateX(-50%); 
+    width: 100%;
+    max-width: 500px; 
+    margin: 0;
+    padding: 20px;
+    background-color: white !important;
+    border: none !important;
   }
 }
