@@ -118,11 +118,11 @@ export default function HostDashboard() {
                 <h3 className="text-lg font-semibold tracking-tight text-slate-900">{visit.visitorName}</h3>
                 <p className="mb-1 text-sm text-slate-600">Purpose: {visit.purpose}</p>
                 <p className="mb-4 text-sm text-slate-600">Time: {new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                <div className="flex space-x-3">
-                  <button onClick={() => handleUpdateStatus(visit._id, "Approved")} className="button-primary flex-1 bg-emerald-600 hover:bg-emerald-700">
+                    <div className="flex flex-col gap-3 md:flex-row">
+                      <button onClick={() => handleUpdateStatus(visit._id, "Approved")} className="button-primary w-full bg-emerald-600 hover:bg-emerald-700 md:w-auto md:flex-1">
                     Approve
                   </button>
-                  <button onClick={() => handleUpdateStatus(visit._id, "Rejected")} className="button-secondary flex-1 border-rose-200 text-rose-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700">
+                      <button onClick={() => handleUpdateStatus(visit._id, "Rejected")} className="button-secondary w-full border-rose-200 text-rose-700 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-700 md:w-auto md:flex-1">
                     Reject
                   </button>
                 </div>
@@ -132,22 +132,22 @@ export default function HostDashboard() {
         )}
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Pre-Register Form */}
         <div className="lg:col-span-1">
           <Card title="Pre-Register a Guest">
             <form onSubmit={handlePreRegister} className="space-y-4">
               <div>
                 <label className="form-label">Guest Name</label>
-                <input required value={visitorName} onChange={(e) => setVisitorName(e.target.value)} className="input-field" placeholder="Clark Kent" />
+                <input required value={visitorName} onChange={(e) => setVisitorName(e.target.value)} className="input-field w-full" placeholder="Clark Kent" />
               </div>
               <div>
                 <label className="form-label">Contact Number</label>
-                <input required value={contact} onChange={(e) => setContact(e.target.value)} className="input-field" placeholder="555-0199" />
+                <input required value={contact} onChange={(e) => setContact(e.target.value)} className="input-field w-full" placeholder="555-0199" />
               </div>
               <div>
                 <label className="form-label">Purpose</label>
-                <select required value={purpose} onChange={(e) => setPurpose(e.target.value)} className="input-field">
+                <select required value={purpose} onChange={(e) => setPurpose(e.target.value)} className="input-field w-full">
                   <option value="" disabled>Select a reason...</option>
                   <option value="Meeting">Meeting</option>
                   <option value="Interview">Interview</option>

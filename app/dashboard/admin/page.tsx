@@ -75,19 +75,19 @@ export default function AdminDashboard() {
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
                 <label className="form-label">Full Name</label>
-                <input required value={name} onChange={(e) => setName(e.target.value)} className="input-field" />
+                <input required value={name} onChange={(e) => setName(e.target.value)} className="input-field w-full" />
               </div>
               <div>
                 <label className="form-label">Email</label>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field" />
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="input-field w-full" />
               </div>
               <div>
                 <label className="form-label">Temporary Password</label>
-                <input required value={password} onChange={(e) => setPassword(e.target.value)} className="input-field" />
+                <input required value={password} onChange={(e) => setPassword(e.target.value)} className="input-field w-full" />
               </div>
               <div>
                 <label className="form-label">System Role</label>
-                <select required value={role} onChange={(e) => setRole(e.target.value)} className="input-field">
+                <select required value={role} onChange={(e) => setRole(e.target.value)} className="input-field w-full">
                   <option value="Admin">Admin</option>
                   <option value="Host">Host</option>
                   <option value="Receptionist">Receptionist</option>

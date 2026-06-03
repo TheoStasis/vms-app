@@ -129,7 +129,7 @@ export default function ReceptionDashboard() {
                     required 
                     value={visitorName} 
                     onChange={(e) => setVisitorName(e.target.value)} 
-                    className="input-field" 
+                    className="input-field w-full" 
                     placeholder="John Doe" 
                     />
               </div>
@@ -139,7 +139,7 @@ export default function ReceptionDashboard() {
                   required 
                   value={contact} 
                   onChange={(e) => setContact(e.target.value)} 
-                  className="input-field" 
+                  className="input-field w-full" 
                   placeholder="555-0199" 
                 />
               </div>
@@ -149,7 +149,7 @@ export default function ReceptionDashboard() {
                     required 
                     value={hostId} 
                     onChange={(e) => setHostId(e.target.value)} 
-                    className="input-field"
+                    className="input-field w-full"
                     >
                   <option value="" disabled>Select a host...</option>
                   {hosts.map((h: any) => (
@@ -163,7 +163,7 @@ export default function ReceptionDashboard() {
                     required 
                     value={purpose} 
                     onChange={(e) => setPurpose(e.target.value)} 
-                    className="input-field"
+                    className="input-field w-full"
                     >
                   <option value="" disabled>Select a reason...</option>
                   <option value="Meeting">Meeting</option>
@@ -215,7 +215,7 @@ export default function ReceptionDashboard() {
                   </td>
                   <td className="px-6 py-4">
                     {visit.status === "Approved" ? (
-                      <button onClick={() => handlePrint(visit)} className="text-sm font-medium text-blue-700 transition hover:text-blue-800">Print Pass</button>
+                      <button onClick={() => handlePrint(visit)} className="text-sm font-medium text-blue-700 transition hover:text-blue-800 sm:whitespace-nowrap">Print Pass</button>
                     ) : (
                       <span className="text-sm text-slate-400">Wait for approval</span>
                     )}
@@ -232,7 +232,7 @@ export default function ReceptionDashboard() {
 
       {/* Hidden Printable Pass (Only visible during window.print) */}
       {visitorToPrint && (
-        <div id="print-section" className="border-2 border-slate-900 bg-white p-6 text-center shadow-none flex flex-col items-center">
+        <div id="print-section" className="mx-auto flex w-full max-w-sm flex-col items-center border-2 border-slate-900 bg-white p-4 text-center shadow-none sm:p-6">
           <h2 className="text-2xl font-bold uppercase mb-2">Visitor Pass</h2>
           <div className="border-b-2 border-black w-full mb-4"></div>
           
@@ -241,7 +241,7 @@ export default function ReceptionDashboard() {
             <img 
               src={visitorToPrint.photoUrl} 
               alt="Visitor" 
-              className="w-28 h-28 rounded-lg object-cover border-2 border-slate-900 mb-4"
+              className="mb-4 h-28 w-28 rounded-lg border-2 border-slate-900 object-cover"
             />
           )}
 
