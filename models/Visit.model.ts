@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IVisit extends Document {
   visitorName: string;
   contact: string;
+  photoUrl?: string;
   purpose: string;
   hostId: mongoose.Types.ObjectId;
   status: 'Pending' | 'Approved' | 'Checked-In' | 'Completed';
@@ -16,6 +17,7 @@ const VisitSchema: Schema<IVisit> = new Schema(
   {
     visitorName: { type: String, required: true },
     contact: { type: String, required: true },
+    photoUrl: { type: String, required: false }, 
     purpose: { type: String, required: true },
     hostId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     status: {

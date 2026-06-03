@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import Table from "@/components/Table";
+import VisitorCamera from "@/components/VisitorCamera";
 
 
 export default function ReceptionDashboard() {
@@ -13,7 +14,8 @@ export default function ReceptionDashboard() {
   const [loading, setLoading] = useState(false);
   const [visitorToPrint, setVisitorToPrint] = useState<any>(null);
   const [contact, setContact] = useState("");
-
+  const [visitorPhoto, setVisitorPhoto] = useState<string | null>(null);
+  const [cameraResetToken, setCameraResetToken] = useState(0);
   // Form State
   const [visitorName, setVisitorName] = useState("");
   const [hostId, setHostId] = useState("");
@@ -41,20 +43,61 @@ export default function ReceptionDashboard() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/visits/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ visitorName, hostId, contact, purpose }),
-    });
+    try {
+      let finalPhotoUrl = "";
 
-    if (res.ok) {
+      if (visitorPhoto) {
+        const photoBlob = await fetch(visitorPhoto).then((response) => response.blob());
+        const formData = new FormData();
+        formData.append("file", photoBlob, "visitor-photo.jpg");
+        formData.append("upload_preset", "vms_visitors");
+
+        const cloudRes = await fetch("https://api.cloudinary.com/v1_1/dxre6ikxq/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const cloudData = await cloudRes.json();
+
+        if (!cloudRes.ok || !cloudData?.secure_url) {
+          console.error("Cloudinary Error Details:", cloudData);
+          throw new Error(cloudData?.error?.message || "Cloudinary upload failed.");
+        }
+
+        finalPhotoUrl = cloudData.secure_url;
+      }
+
+      const res = await fetch("/api/visits/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          visitorName,
+          hostId,
+          contact,
+          purpose,
+          ...(finalPhotoUrl ? { photoUrl: finalPhotoUrl } : {}),
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to save visitor.");
+      }
+
       setVisitorName("");
       setHostId("");
+      setContact("");
       setPurpose("");
-      await fetchData(); // Instantly refresh the table
+      setVisitorPhoto(null);
+      setCameraResetToken((currentToken) => currentToken + 1);
+      await fetchData();
       router.refresh();
+    } catch (error: any) {
+      console.error("Visitor registration failed:", error);
+      alert(error?.message || "Visitor registration failed.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handlePrint = (visit: any) => {
@@ -129,6 +172,10 @@ export default function ReceptionDashboard() {
                   <option value="Personal">Personal</option>
                 </select>
               </div>
+              <VisitorCamera
+                onCapture={(img) => setVisitorPhoto(img)}
+                resetSignal={cameraResetToken}
+              />
               <button type="submit" disabled={loading} className="button-primary w-full">
                 {loading ? "Registering..." : "Register & Notify Host"}
               </button>
@@ -137,12 +184,30 @@ export default function ReceptionDashboard() {
         </div>
 
         {/* Table Column */}
+       
         <div className="lg:col-span-2">
           <Card title="Today's Visitor Log">
             <Table headers={["Visitor", "Host", "Time", "Status", "Action"]}>
               {visits.map((visit: any) => (
                 <tr key={visit._id} className="hover:bg-slate-50/80">
-                  <td className="px-6 py-4 font-medium text-slate-900">{visit.visitorName}</td>
+                  
+                  <td className="px-6 py-4 font-medium text-slate-900">
+                    <div className="flex items-center gap-3">
+                      {visit.photoUrl ? (
+                        <img 
+                          src={visit.photoUrl} 
+                          alt={visit.visitorName} 
+                          className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-bold text-sm">
+                          {visit.visitorName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <span>{visit.visitorName}</span>
+                    </div>
+                  </td>
+                  
                   <td className="px-6 py-4">{visit.hostId?.name || "Unknown"}</td>
                   <td className="px-6 py-4">{new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                   <td className="px-6 py-4">
@@ -167,18 +232,28 @@ export default function ReceptionDashboard() {
 
       {/* Hidden Printable Pass (Only visible during window.print) */}
       {visitorToPrint && (
-        <div id="print-section" className="border-2 border-slate-900 bg-white p-6 text-center shadow-none">
+        <div id="print-section" className="border-2 border-slate-900 bg-white p-6 text-center shadow-none flex flex-col items-center">
           <h2 className="text-2xl font-bold uppercase mb-2">Visitor Pass</h2>
-          <div className="border-b-2 border-black mb-4"></div>
+          <div className="border-b-2 border-black w-full mb-4"></div>
+          
+          {/* Clean image layout for the printed badge */}
+          {visitorToPrint.photoUrl && (
+            <img 
+              src={visitorToPrint.photoUrl} 
+              alt="Visitor" 
+              className="w-28 h-28 rounded-lg object-cover border-2 border-slate-900 mb-4"
+            />
+          )}
+
           <p className="text-sm text-gray-500 uppercase">Name</p>
           <p className="text-xl font-bold mb-4">{visitorToPrint.visitorName}</p>
           <p className="text-sm text-gray-500 uppercase">Host</p>
-          <p className="text-lg mb-4">{visitorToPrint.host?.name}</p>
+          <p className="text-lg mb-4">{visitorToPrint.hostId?.name || "Unknown"}</p>
           <p className="text-sm text-gray-500 uppercase">Date</p>
           <p className="text-md font-medium">{new Date().toLocaleDateString()}</p>
           <div className="mt-6 text-xs text-gray-400">Please wear this badge at all times.</div>
         </div>
-      )}
+        )}
     </div>
   );
 }

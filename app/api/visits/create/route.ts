@@ -4,27 +4,25 @@ import Visit from "@/models/Visit.model";
 import User from "@/models/User.model";
 import { Resend } from "resend";
 
-// Only initialize Resend if the API key actually exists in .env.local
+
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
-    const { visitorName, hostId, contact, status, purpose } = await req.json();
+    const { visitorName, hostId, contact, status, purpose, photoUrl } = await req.json();
 
-    // 1. Create the database record
     const newVisit = await Visit.create({
       visitorName,
       contact,
       hostId,
       purpose,
+      photoUrl, 
       status: status || "Pending"
     });
 
-    // 2. Fetch the host's email to notify them
     const host = await User.findById(hostId);
 
-    // 3. Send email ONLY if Resend was initialized and host exists
     if (resend && host) {
       try {
         await resend.emails.send({

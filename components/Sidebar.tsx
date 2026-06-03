@@ -23,12 +23,12 @@ export default function Sidebar() {
   const allowedLinks = navLinks.filter((link) => link.roles.includes(role));
 
   return (
-    <aside className="h-[calc(100vh-4rem)] w-72 shrink-0 border-r border-slate-200 bg-slate-50/80 p-4 backdrop-blur">
-      <div className="mb-4 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+    <aside className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-3 py-2 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] backdrop-blur md:px-4 lg:bottom-0 lg:left-0 lg:top-16 lg:h-[calc(100vh-4rem)] lg:w-72 lg:border-r lg:border-t-0 lg:bg-slate-50/80 lg:p-4 lg:shadow-none">
+      <div className="mb-4 hidden rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm lg:block">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">Current Role</p>
         <p className="mt-1 text-sm font-semibold text-slate-900">{role || "Member"}</p>
       </div>
-      <nav className="flex flex-col gap-2">
+      <nav className="flex flex-nowrap items-stretch gap-6 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden lg:flex-col lg:gap-2 lg:overflow-visible">
         {allowedLinks.map((link) => {
           const Icon = link.icon;
           // Exact match for dashboard, or starts with for sub-pages
@@ -38,9 +38,10 @@ export default function Sidebar() {
             <Link 
               key={link.name} 
               href={link.href} 
-              className={`flex items-center gap-3 rounded-xl px-3.5 py-3 text-sm font-medium transition-all duration-200 ${isActive ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20" : "text-slate-600 hover:-translate-y-0.5 hover:bg-white hover:text-slate-900 hover:shadow-sm"}`}
+              className={`flex w-auto flex-none items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-[11px] font-semibold transition-all duration-200 sm:text-sm lg:flex-none lg:justify-start lg:gap-3 lg:px-3.5 lg:py-3 ${isActive ? "bg-blue-600 text-white shadow-sm shadow-blue-600/20" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 lg:hover:-translate-y-0.5 lg:hover:bg-white lg:hover:shadow-sm"}`}
             >
-              <Icon className="h-5 w-5" /> {link.name}
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="whitespace-nowrap">{link.name}</span>
             </Link>
           );
         })}

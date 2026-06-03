@@ -3,12 +3,12 @@ import Sidebar from "@/components/Sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="page-shell flex min-h-screen flex-col">
+    <div className="page-shell min-h-screen bg-slate-100">
       <Navbar />
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col lg:flex-row">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto">
-          <div className="page-container">{children}</div>
+        <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 lg:pl-72">
+          <div className="page-container w-full px-4 py-4 md:px-8 md:py-8 lg:px-10 lg:py-10">{children}</div>
         </main>
       </div>
     </div>
