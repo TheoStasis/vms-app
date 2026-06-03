@@ -65,7 +65,7 @@ export default function ReportsDashboard() {
           <h1 className="page-title mt-3">Master Audit Log</h1>
           <p className="page-copy mt-2">Review all historical visitor records and export for compliance.</p>
         </div>
-        <button onClick={handleExportCSV} className="button-primary bg-emerald-600 hover:bg-emerald-700">
+        <button onClick={handleExportCSV} className="button-primary w-full bg-emerald-600 hover:bg-emerald-700 md:w-auto">
           Export to CSV
         </button>
       </div>
@@ -74,14 +74,14 @@ export default function ReportsDashboard() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:gap-6">
           <div>
             <label className="form-label">Start Date</label>
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-field" />
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="input-field w-full" />
           </div>
           <div>
             <label className="form-label">End Date</label>
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input-field" />
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="input-field w-full" />
           </div>
           <div className="flex items-end pb-1">
-            <button onClick={() => { setStartDate(""); setEndDate(""); }} className="button-ghost px-0 hover:bg-transparent hover:text-blue-700">
+            <button onClick={() => { setStartDate(""); setEndDate(""); }} className="button-ghost w-full px-0 hover:bg-transparent hover:text-blue-700 md:w-auto">
               Clear Filters
             </button>
           </div>

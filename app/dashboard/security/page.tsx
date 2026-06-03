@@ -69,7 +69,7 @@ export default function SecurityDashboard() {
                   <button
                     onClick={() => handleGateAction(visit._id, "check-in")}
                     disabled={loadingId === visit._id}
-                    className="button-primary"
+                    className="button-primary w-full md:w-auto"
                   >
                     {loadingId === visit._id ? "Processing..." : "Check-In"}
                   </button>
@@ -95,7 +95,7 @@ export default function SecurityDashboard() {
                   <button
                     onClick={() => handleGateAction(visit._id, "check-out")}
                     disabled={loadingId === visit._id}
-                    className="button-secondary bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                    className="button-secondary w-full bg-slate-900 text-white hover:bg-slate-800 hover:text-white md:w-auto"
                   >
                     {loadingId === visit._id ? "Processing..." : "Check-Out"}
                   </button>
