@@ -38,24 +38,27 @@ export default function HostDashboard() {
   };
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      if (!session?.user?.email) return;
+    const userEmail = session?.user?.email;
 
-      void (async () => {
-        try {
-          const res = await fetch(`/api/visits/host?email=${session.user.email}`);
-          const data = await res.json();
-          if (data.visits) {
-            setVisits(data.visits);
-            setHostId(data.hostId);
-          }
-        } catch (error) {
-          console.error("Failed to fetch host data:", error);
+    if (!userEmail) return;
+
+    const fetchHostData = async () => {
+      try {
+        const res = await fetch(`/api/visits/host?email=${userEmail}`);
+        const data = await res.json();
+        
+        if (data.visits) {
+          setVisits(data.visits);
+          setHostId(data.hostId);
         }
-      })();
-    }, 0);
+      } catch (error) {
+        console.error("Failed to fetch host data:", error);
+      }
+    };
 
-    return () => window.clearTimeout(timer);
+    
+    fetchHostData();
+    
   }, [session?.user?.email]);
 
   const handleUpdateStatus = async (visitId: string, status: string) => {
