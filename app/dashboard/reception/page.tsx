@@ -36,6 +36,15 @@ export default function ReceptionDashboard() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleAfterPrint = () => {
+      setVisitorToPrint(null);
+    };
+    
+    window.addEventListener("afterprint", handleAfterPrint);
+    return () => window.removeEventListener("afterprint", handleAfterPrint);
+  }, []);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -99,10 +108,11 @@ export default function ReceptionDashboard() {
 
   const handlePrint = (visit: any) => {
     setVisitorToPrint(visit);
+    
     setTimeout(() => {
-      window.print();
-      setVisitorToPrint(null);
-    }, 100);
+      window.print(); 
+      
+    }, 300); 
   };
 
   return (
@@ -226,7 +236,7 @@ export default function ReceptionDashboard() {
       </div>
 
       {visitorToPrint && (
-        <div id="print-section" className="print:block hidden w-full max-w-[400px] mx-auto bg-white p-6 text-center mt-10">
+        <div id="print-section" className="w-full max-w-[400px] mx-auto bg-white p-6 text-center mt-10">
           <h2 className="text-2xl font-bold uppercase mb-2">Visitor Pass</h2>
           <div className="border-b-2 border-black w-full mb-4"></div>
           
