@@ -14,6 +14,7 @@ export default function ReceptionDashboard() {
   const [visitorToPrint, setVisitorToPrint] = useState<any>(null);
   const [contact, setContact] = useState("");
   const [visitorPhoto, setVisitorPhoto] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState("");
   const [cameraResetToken, setCameraResetToken] = useState(0);
   const [visitorName, setVisitorName] = useState("");
   const [hostId, setHostId] = useState("");
@@ -47,6 +48,10 @@ export default function ReceptionDashboard() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!visitorPhoto) {
+      setPhotoError("Please capture a visitor photo.");
+      return;
+    }
     setLoading(true);
 
     try {
@@ -180,11 +185,18 @@ export default function ReceptionDashboard() {
                     <option value="Personal">Personal</option>
                   </select>
                 </div>
-                <VisitorCamera
-                  onCapture={(img) => setVisitorPhoto(img)}
-                  resetSignal={cameraResetToken}
-                />
-                <button type="submit" disabled={loading} className="button-primary w-full">
+                <div>
+                  <label className="form-label">Visitor Photo <span className="text-red-500">*</span></label>
+                  <VisitorCamera
+                    onCapture={(img) => {
+                      setVisitorPhoto(img);
+                      setPhotoError("");
+                    }}
+                    resetSignal={cameraResetToken}
+                  />
+                  {photoError && <p className="text-sm text-red-600 mt-1">{photoError}</p>}
+                </div>
+                <button type="submit" disabled={loading || !visitorPhoto} className="button-primary w-full">
                   {loading ? "Registering..." : "Register & Notify Host"}
                 </button>
               </form>
