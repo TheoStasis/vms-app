@@ -58,8 +58,29 @@ export default function AdminDashboard() {
     });
     await fetchUsers();
   };
+  const handleRoleChange = async (userId: string, newRole: string) => {
+    try {
+      const res = await fetch("/api/users/update-role", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, role: newRole }),
+      });
 
-  return (
+      if (!res.ok) throw new Error("Failed to update role");
+
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user._id === userId ? { ...user, role: newRole } : user
+        )
+      );
+      
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update user role.");
+    }
+  };
+
+ return (
     <div className="space-y-6">
       <div className="surface-header">
         <div>
@@ -109,7 +130,22 @@ export default function AdminDashboard() {
                 <tr key={user._id} className="hover:bg-slate-50/80">
                   <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
                   <td className="px-6 py-4">{user.email}</td>
-                  <td className="px-6 py-4"><span className="badge badge-completed">{user.role}</span></td>
+                  
+                  {/* UPDATE: Swapped static badge for editable dropdown */}
+                  <td className="px-6 py-4">
+                    <select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                      className="input-field py-1 px-2 text-sm w-full max-w-[140px] cursor-pointer"
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Host">Host</option>
+                      <option value="Receptionist">Receptionist</option>
+                      <option value="Security">Security</option>
+                      <option value="Auditor">Auditor</option>
+                    </select>
+                  </td>
+                  
                   <td className="px-6 py-4">
                     <button onClick={() => handleDeleteUser(user._id)} className="text-sm font-medium text-rose-600 transition hover:text-rose-700">Delete</button>
                   </td>
