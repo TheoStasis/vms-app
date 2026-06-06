@@ -12,7 +12,7 @@ export default function Sidebar() {
 
   const navLinks = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["Admin", "Receptionist", "Security", "Host", "Auditor"] },
-    // We added the Host link right here:
+    
     { name: "My Visitors", href: "/dashboard/host", icon: UserCheck, roles: ["Admin", "Host"] },
     { name: "Reception", href: "/dashboard/reception", icon: Users, roles: ["Admin", "Receptionist"] },
     { name: "Gate Check", href: "/dashboard/security", icon: ShieldCheck, roles: ["Admin", "Security"] },
@@ -31,7 +31,7 @@ export default function Sidebar() {
       <nav className="flex flex-nowrap items-stretch gap-6 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden lg:flex-col lg:gap-2 lg:overflow-visible">
         {allowedLinks.map((link) => {
           const Icon = link.icon;
-          // Exact match for dashboard, or starts with for sub-pages
+         
           const isActive = pathname === link.href || (link.href !== "/dashboard" && pathname.startsWith(link.href));
           
           return (
