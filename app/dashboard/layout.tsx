@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col lg:flex-row">
         
-        {/* side nav gone brr */}
+        {/* side nav gone */}
         <div className="p
         rint:hidden">
           <Sidebar />
