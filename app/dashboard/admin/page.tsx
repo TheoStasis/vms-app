@@ -131,7 +131,7 @@ export default function AdminDashboard() {
                   <td className="px-6 py-4 font-medium text-slate-900">{user.name}</td>
                   <td className="px-6 py-4">{user.email}</td>
                   
-                  {/* UPDATE: Swapped static badge for editable dropdown */}
+                  {/* UPDATE: DROPDOWN DESIGNED */}
                   <td className="px-6 py-4">
                     <select
                       value={user.role}

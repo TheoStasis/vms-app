@@ -5,15 +5,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="page-shell min-h-screen bg-slate-100">
       
-      {/* Hides top nav on print */}
+      {/* top nav gone brr*/}
       <div className="print:hidden">
         <Navbar />
       </div>
 
       <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col lg:flex-row">
         
-        {/* Hides side/bottom nav on print */}
-        <div className="print:hidden">
+        {/* side nav gone brr */}
+        <div className="p
+        rint:hidden">
           <Sidebar />
         </div>
 
