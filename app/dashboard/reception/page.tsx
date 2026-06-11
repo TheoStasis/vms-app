@@ -22,7 +22,6 @@ export default function ReceptionDashboard() {
 
   const fetchData = async () => {
     const [hostsRes, visitsRes] = await Promise.all([
-      // UPDATED: Now hitting the live corporate SQL database
       fetch("/api/employees"),
       fetch("/api/visits/today")
     ]);
@@ -122,15 +121,16 @@ export default function ReceptionDashboard() {
     }, 300); 
   };
 
-  // Helper function to map employee code to name for display
   const getHostName = (id: string | any) => {
-    // If it's a new SQL ID, find the name in our hosts list
     const foundHost = hosts.find((h: any) => h.empcd === id);
     if (foundHost) return `${foundHost.Name} (${foundHost.Department})`;
     
-    // Fallback for older test data that used MongoDB objects
     return id?.name || id || "Unknown";
   };
+
+  // CHECK IF SELECTED HOST HAS NO EMAIL
+  const selectedHostDetails = hosts.find((h: any) => h.empcd === hostId);
+  const showEmailWarning = selectedHostDetails && (!selectedHostDetails.Email || selectedHostDetails.Email.trim() === "");
 
   return (
     <div className="relative">
@@ -177,15 +177,20 @@ export default function ReceptionDashboard() {
                       className="input-field w-full"
                       >
                     <option value="" disabled>Select a host...</option>
-                    
-                    {/* UPDATED: Mapping the SQL Keys */}
                     {hosts.map((h: any) => (
                       <option key={h.empcd} value={h.empcd}>
                         {h.Name} - {h.Department}
                       </option>
                     ))}
-
                   </select>
+                  
+                  {/* AMBER EMAIL WARNING UI */}
+                  {showEmailWarning && (
+                    <div className="mt-2 p-3 text-sm font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-md shadow-sm">
+                      ⚠️ This host has no email on file. The system will log the visit, but you will need to notify them manually.
+                    </div>
+                  )}
+                  
                 </div>
                 <div>
                   <label className="form-label">Purpose</label>
@@ -242,7 +247,6 @@ export default function ReceptionDashboard() {
                       </div>
                     </td>
                     
-                    {/* UPDATED: Dynamic SQL Host Name Lookup */}
                     <td className="px-6 py-4">{getHostName(visit.hostId)}</td>
                     
                     <td className="px-6 py-4">{new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
@@ -284,7 +288,6 @@ export default function ReceptionDashboard() {
           <p className="text-xl font-bold mb-4">{visitorToPrint.visitorName}</p>
           <p className="text-sm text-gray-500 uppercase">Host</p>
           
-          {/* UPDATED: Dynamic SQL Host Name Lookup */}
           <p className="text-lg mb-4">{getHostName(visitorToPrint.hostId)}</p>
           
           <p className="text-sm text-gray-500 uppercase">Date</p>
