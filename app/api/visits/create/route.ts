@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       status: status || "Pending"
     });
 
-    // 2. Send the Magic Link via Gmail SMTP
+    // 2. Send the Link via Gmail SMTP
     if (hostEmail) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
       const approveLink = `${baseUrl}/api/visits/action?id=${newVisit._id}&action=Approved`;
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       try {
         await transporter.sendMail({
           from: `"VMS" <${process.env.GMAIL_USER}>`,
-          to: "tanay84367535@gmail.com", // Dynamic host email
+          to: hostEmail, // Dynamic host email
           subject: `New Visitor: ${visitorName} is here`,
           html: `
             <div style="font-family: sans-serif; color: #333;">
