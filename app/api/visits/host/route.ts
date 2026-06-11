@@ -16,8 +16,7 @@ export async function GET(req: Request) {
     if (!host) return NextResponse.json({ error: "Host not found" }, { status: 404 });
 
     // Fetch ONLY visits where hostId matches this specific host
-    const visits = await Visit.find({ hostId: host._id }).sort({ createdAt: -1 });
-    
+    const visits = await Visit.find({ hostId: String(host._id) }).sort({ createdAt: -1});
     return NextResponse.json({ hostId: host._id, visits });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
