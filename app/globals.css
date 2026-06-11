@@ -224,3 +224,11 @@ html {
   color: #be123c;
 }
 
+/* @media print {
+  @page {
+    margin: 0; 
+  }
+  body {
+    padding: 1cm; 
+  }
+} */
