@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       try {
         await resend.emails.send({
           from: "VMS <onboarding@resend.dev>", // Update this if you have a verified domain on Resend
-          to: "tanay84367535@gmail.com", //hostEmail
+          to: hostEmail, //hostEmail
           subject: `New Visitor: ${visitorName} is here`,
           html: `
             <div style="font-family: sans-serif; color: #333;">
