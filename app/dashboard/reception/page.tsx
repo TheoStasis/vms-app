@@ -61,9 +61,8 @@ export default function ReceptionDashboard() {
         const photoBlob = await fetch(visitorPhoto).then((response) => response.blob());
         const formData = new FormData();
         formData.append("file", photoBlob, "visitor-photo.jpg");
-        formData.append("upload_preset", "vms_visitors");
-
-        const cloudRes = await fetch("https://api.cloudinary.com/v1_1/dxre6ikxq/image/upload", {
+        formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
           method: "POST",
           body: formData,
         });
