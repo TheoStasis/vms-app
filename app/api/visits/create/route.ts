@@ -1,17 +1,23 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import Visit from "@/models/Visit.model";
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+// Create the Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 export async function POST(req: Request) {
   try {
     await dbConnect();
-    // 1. Destructure the payload, now including hostEmail
     const { visitorName, hostId, contact, status, purpose, photoUrl, hostEmail } = await req.json();
 
-    // 2. Create the visit in MongoDB
+    // 1. Create the visit in MongoDB
     const newVisit = await Visit.create({
       visitorName,
       contact,
@@ -21,18 +27,16 @@ export async function POST(req: Request) {
       status: status || "Pending"
     });
 
-    // 3. Send the Magic Link Email
-    if (resend && hostEmail) {
-      // Use your live Vercel domain if available, otherwise fallback to localhost for testing
+    // 2. Send the Magic Link via Gmail SMTP
+    if (hostEmail) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-      
       const approveLink = `${baseUrl}/api/visits/action?id=${newVisit._id}&action=Approved`;
       const rejectLink = `${baseUrl}/api/visits/action?id=${newVisit._id}&action=Rejected`;
 
       try {
-        await resend.emails.send({
-          from: "VMS <onboarding@resend.dev>", // Update this if you have a verified domain on Resend
-          to: hostEmail, //hostEmail
+        await transporter.sendMail({
+          from: `"VMS" <${process.env.GMAIL_USER}>`,
+          to: "tanay84367535@gmail.com", // Dynamic host email
           subject: `New Visitor: ${visitorName} is here`,
           html: `
             <div style="font-family: sans-serif; color: #333;">
@@ -50,8 +54,7 @@ export async function POST(req: Request) {
           `,
         });
       } catch (emailError) {
-        console.error("Failed to send email:", emailError);
-        // We don't throw an error here so the visit still gets successfully created in the DB
+        console.error("Failed to send Gmail SMTP email:", emailError);
       }
     }
 
