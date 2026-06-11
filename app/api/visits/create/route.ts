@@ -21,20 +21,18 @@ export async function POST(req: Request) {
       status: status || "Pending"
     });
 
-    const host = await User.findById(hostId);
+    // TEMPORARY FIX: Bypassing MongoDB host lookup because hosts are now in SQL.
+      // We will add SQL email fetching here in the next step.
+      const hostEmail = null; 
 
-    if (resend && host) {
-      try {
-        await resend.emails.send({
-          from: "VMS Portal <onboarding@resend.dev>", 
-          to: host.email,
-          subject: "New Visitor Waiting",
-          html: `<p>Hello ${host.name},</p><p><strong>${visitorName}</strong> is at the reception to see you for a <strong>${purpose}</strong>.</p><p>Please log in to your dashboard to approve or reject the visit.</p>`
-        });
-      } catch (emailError) {
-        console.error("Email failed to send, but visit was saved:", emailError);
-      }
-    }
+      /* if (resend && hostEmail) {
+        try {
+          // ... resend email logic ...
+        } catch (emailError) {
+          console.error("Failed to send email:", emailError);
+        }
+      } 
+      */
 
     return NextResponse.json(newVisit, { status: 201 });
   } catch (error: any) {

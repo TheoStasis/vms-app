@@ -22,7 +22,8 @@ export default function ReceptionDashboard() {
 
   const fetchData = async () => {
     const [hostsRes, visitsRes] = await Promise.all([
-      fetch("/api/users/hosts"),
+      // UPDATED: Now hitting the live corporate SQL database
+      fetch("/api/employees"),
       fetch("/api/visits/today")
     ]);
     setHosts(await hostsRes.json());
@@ -116,8 +117,17 @@ export default function ReceptionDashboard() {
     
     setTimeout(() => {
       window.print(); 
-      
     }, 300); 
+  };
+
+  // Helper function to map employee code to name for display
+  const getHostName = (id: string | any) => {
+    // If it's a new SQL ID, find the name in our hosts list
+    const foundHost = hosts.find((h: any) => h.empcd === id);
+    if (foundHost) return `${foundHost.Name} (${foundHost.Department})`;
+    
+    // Fallback for older test data that used MongoDB objects
+    return id?.name || id || "Unknown";
   };
 
   return (
@@ -165,9 +175,14 @@ export default function ReceptionDashboard() {
                       className="input-field w-full"
                       >
                     <option value="" disabled>Select a host...</option>
+                    
+                    {/* UPDATED: Mapping the SQL Keys */}
                     {hosts.map((h: any) => (
-                      <option key={h._id} value={h._id}>{h.name} ({h.email})</option>
+                      <option key={h.empcd} value={h.empcd}>
+                        {h.Name} - {h.Department}
+                      </option>
                     ))}
+
                   </select>
                 </div>
                 <div>
@@ -224,7 +239,10 @@ export default function ReceptionDashboard() {
                         <span>{visit.visitorName}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">{visit.hostId?.name || "Unknown"}</td>
+                    
+                    {/* UPDATED: Dynamic SQL Host Name Lookup */}
+                    <td className="px-6 py-4">{getHostName(visit.hostId)}</td>
+                    
                     <td className="px-6 py-4">{new Date(visit.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                     <td className="px-6 py-4">
                       <span className={`badge badge-${visit.status.toLowerCase()}`}>{visit.status}</span>
@@ -263,7 +281,10 @@ export default function ReceptionDashboard() {
           <p className="text-sm text-gray-500 uppercase">Name</p>
           <p className="text-xl font-bold mb-4">{visitorToPrint.visitorName}</p>
           <p className="text-sm text-gray-500 uppercase">Host</p>
-          <p className="text-lg mb-4">{visitorToPrint.hostId?.name || "Unknown"}</p>
+          
+          {/* UPDATED: Dynamic SQL Host Name Lookup */}
+          <p className="text-lg mb-4">{getHostName(visitorToPrint.hostId)}</p>
+          
           <p className="text-sm text-gray-500 uppercase">Date</p>
           <p className="text-md font-medium">{new Date().toLocaleDateString()}</p>
           <div className="mt-6 text-xs text-gray-400">Please wear this badge at all times.</div>

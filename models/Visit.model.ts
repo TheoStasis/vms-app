@@ -5,7 +5,7 @@ export interface IVisit extends Document {
   contact: string;
   photoUrl?: string;
   purpose: string;
-  hostId: mongoose.Types.ObjectId;
+  hostId: string; // <-- 1. Changed from mongoose.Types.ObjectId to string
   status: 'Pending' | 'Approved' | 'Checked-In' | 'Completed';
   entryTime?: Date;
   exitTime?: Date;
@@ -19,7 +19,7 @@ const VisitSchema: Schema<IVisit> = new Schema(
     contact: { type: String, required: true },
     photoUrl: { type: String, required: false }, 
     purpose: { type: String, required: true },
-    hostId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    hostId: { type: String, required: true }, // <-- 2. Changed to String, removed ref
     status: {
       type: String,
       enum: ['Pending', 'Approved', 'Checked-In', 'Completed'],
