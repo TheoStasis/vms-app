@@ -79,6 +79,7 @@ export default function ReceptionDashboard() {
         finalPhotoUrl = cloudData.secure_url;
       }
 
+      const selectedHost = hosts.find((h: any) => h.empcd === hostId);
       const res = await fetch("/api/visits/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,6 +88,7 @@ export default function ReceptionDashboard() {
           hostId,
           contact,
           purpose,
+          hostEmail: selectedHost?.Email,
           ...(finalPhotoUrl ? { photoUrl: finalPhotoUrl } : {}),
         }),
       });
